@@ -114,7 +114,7 @@ void loop() {
     delay(2000);
     
     //Digital debounce
-    if (sensorVal > 310) {
+    if (sensorVal > analogThreshold) {
       Serial.println("Sending message..."); 
       sensorState = 1;
       httpRequest(true); 
@@ -123,10 +123,10 @@ void loop() {
  
   } 
   
-  if (analogRead(A0) <= 310 && sensorState == 1) {
+  if (analogRead(A0) <= analogThreshold && sensorState == 1) {
   
     delay(2000);
-    if (sensorVal <= 310) {
+    if (sensorVal <= analogThreshold) {
         Serial.println("Setting sensorState low...");
         sensorState = 0;
         httpRequest(false); 
