@@ -26,7 +26,7 @@ const String key = "fevd4e5f9";
 int status = WL_IDLE_STATUS;
 int sensorState = 0;
 int ledToggle = 2;
-int analogThreshold = 310; //The threshold value when the arduino will send a message
+int analogThreshold = 1000; //The threshold value when the arduino will send a message
 
 // Initialize the Wifi client library
 WiFiClient client;
@@ -47,33 +47,39 @@ int buttonState = 0;
 int sentMessage = 1;
 
 void setup() {
+  
+    Serial.begin(9600); 
+  //********* HTTP SETUP ******************//
+  
   //Initialize serial and wait for port to open:
-  Serial.begin(9600); 
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for Leonardo only
-  }
+//
+//  while (!Serial) {
+//    ; // wait for serial port to connect. Needed for Leonardo only
+//  }
+//  
+//  // check for the presence of the shield:
+//  if (WiFi.status() == WL_NO_SHIELD) {
+//    Serial.println("WiFi shield not present"); 
+//    // don't continue:
+//    while(true);
+//  } 
+//  
+//  // attempt to connect to Wifi network:
+//  while ( status != WL_CONNECTED) { 
+//    Serial.print("Attempting to connect to SSID: ");
+//    Serial.println(ssid);
+//    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:    
+//    status = WiFi.begin(ssid, pass);
+//
+//    // wait 10 seconds for connection:
+//    delay(10000);
+//  } 
+//  // you're connected now, so print out the status:
+//  printWifiStatus();
+//  
+  //*********** OTHER SETUP *****************//
   
-  // check for the presence of the shield:
-  if (WiFi.status() == WL_NO_SHIELD) {
-    Serial.println("WiFi shield not present"); 
-    // don't continue:
-    while(true);
-  } 
-  
-  // attempt to connect to Wifi network:
-  while ( status != WL_CONNECTED) { 
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:    
-    status = WiFi.begin(ssid, pass);
-
-    // wait 10 seconds for connection:
-    delay(10000);
-  } 
-  // you're connected now, so print out the status:
-  printWifiStatus();
-  
-    // initialize the LED pin as an output:
+  // initialize the LED pin as an output:
   pinMode(ledPin, OUTPUT);      
   // initialize the pushbutton pin as an input:
   pinMode(buttonPin, INPUT);   
@@ -83,41 +89,47 @@ void loop() {
   // if there's incoming data from the net connection.
   // send it out the serial port.  This is for debugging
   // purposes only:
-  while (client.available()) {
-    char c = client.read();
-    Serial.write(c);
-  }
-
-  // if there's no net connection, but there was one last time
-  // through the loop, then stop the client:
-  if (!client.connected() && lastConnected) {
-    Serial.println();
-    Serial.println("disconnecting.");
-    client.stop();
-  }
-
-  // if you're not connected, and ten seconds have passed since
-  // your last connection, then connect again and send data:
-  if(!client.connected() && (millis() - lastConnectionTime > postingInterval)) {
-//    httpRequest();
-  }
-  // store the state of the connection for next time through
-  // the loop:
-  lastConnected = client.connected();
- 
   
+  // ************* HTTP FUNCTION ****************//
+//  while (client.available()) {
+//    char c = client.read();
+//    Serial.write(c);
+//  }
+//
+//  // if there's no net connection, but there was one last time
+//  // through the loop, then stop the client:
+//  if (!client.connected() && lastConnected) {
+//    Serial.println();
+//    Serial.println("disconnecting.");
+//    client.stop();
+//  }
+//
+//  // if you're not connected, and ten seconds have passed since
+//  // your last connection, then connect again and send data:
+//  if(!client.connected() && (millis() - lastConnectionTime > postingInterval)) {
+////    httpRequest();
+//  }
+//  // store the state of the connection for next time through
+//  // the loop:
+//  lastConnected = client.connected();
+// 
+//  
   int sensorVal = analogRead(A0);
-  Serial.println(sensorVal);
-  
+//  Serial.println(sensorVal);
+//  
+
+
+
   if ((analogRead(A0) > 310) && (sensorState == 0)) {     
     // turn LED on:    
-    delay(2000);
+    delay(500);
     
     //Digital debounce
     if (sensorVal > analogThreshold) {
-      Serial.println("Sending message..."); 
+//      Serial.println("Sending message..."); 
       sensorState = 1;
-      httpRequest(true); 
+      Serial.println(sensorState);
+//      httpRequest(true); 
 
     }
  
@@ -125,11 +137,12 @@ void loop() {
   
   if (analogRead(A0) <= analogThreshold && sensorState == 1) {
   
-    delay(2000);
+    delay(500);
     if (sensorVal <= analogThreshold) {
-        Serial.println("Setting sensorState low...");
+//        Serial.println("Setting sensorState low...");
         sensorState = 0;
-        httpRequest(false); 
+        Serial.println(sensorState);
+//        httpRequest(false); 
       }
 
 }
